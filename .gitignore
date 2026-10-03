@@ -23,3 +23,8 @@ firmware/warmup/**/Release/
 .DS_Store
 .vscode/
 .idea/
+
+#executables
+main
+gen
+context.md

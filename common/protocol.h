@@ -12,4 +12,13 @@ typedef struct packet_t{
     uint8_t checksum;
 } frame;
 
+typedef enum {
+    GOOD,
+    BAD
+} checksum;
+
+// packet decoder function checks the packet inegrity
+checksum packet_decoder(struct packet_t *p, int len);
+
+
 #endif
