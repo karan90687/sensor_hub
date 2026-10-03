@@ -8,7 +8,7 @@
 
 int main() {
     printf("-------  Starting the buffer analysis function  -------\n");
-    printf(" ------- Reading the data form the edg.bin ------- \n");
+    // printf(" ------- Reading the data form the edg.bin ------- \n");
 
     uint8_t edge[MAX_SIZE];
 
@@ -53,11 +53,11 @@ int main() {
     similarly for uint32_t as shown above in frame.timestamp
     */
     int len =13;
-    printf("------- Decoding and analysing the obtained buffer ------- \n");
-    checksum result = packet_decoder(&frame, len);
-    printf("------- printing the obtained buffer ------- \n");
+    // printf("------- Decoding and analysing the obtained buffer ------- \n");
+    packet_decoder(&frame, len);
+    // printf("------- printing the obtained buffer ------- \n");
     buffer_print(&frame, len);
-    printf("result code of the buffer %d \n",result);
+    
 
 
     return 0;

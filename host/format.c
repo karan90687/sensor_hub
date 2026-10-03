@@ -14,6 +14,6 @@ void buffer_print(struct packet_t *p, int len){
     printf("device id %d in hex %x \n",p->device_id,p->device_id);
     printf("timestamp byte %d in hex %x \n",p->timestamp,p->timestamp);
     printf("checksum byte %d in hex %x \n",p->checksum,p->checksum);
-    // checksum result = packet_decoder(p, len);
-    // printf("result code of the buffer %d \n",result);
+    checksum result = packet_decoder(p, len);
+    printf("result code of the buffer %d \n",result);
 }
