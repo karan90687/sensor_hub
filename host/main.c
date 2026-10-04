@@ -8,7 +8,6 @@
 
 int main() {
     printf("-------  Starting the buffer analysis function  -------\n");
-    // printf(" ------- Reading the data form the edg.bin ------- \n");
 
     uint8_t edge[MAX_SIZE];
 
@@ -31,11 +30,10 @@ int main() {
         // printf("%02X ", edge[i]);
     }
     // printf("\n");
-
     struct packet_t frame;
     frame.sync_byte = buffer[0];
     frame.flag  = buffer[1];
-    frame.temprature = ((uint16_t)buffer[3] << 8) | buffer[2];
+    frame.temprature = (int16_t)(((uint16_t)buffer[3] << 8) | buffer[2]);
     frame.device_id = ((uint32_t)buffer[7] << 24) | ((uint32_t)buffer[6] << 16) | ((uint32_t)buffer[5] << 8) | buffer[4];
     frame.timestamp = ((uint32_t)buffer[11] << 24) | ((uint32_t)buffer[10] << 16) | ((uint32_t)buffer[9] << 8) | buffer[8];
     frame.checksum = buffer[12];
@@ -66,10 +64,22 @@ int main() {
 
 /*
 to compile the main.c 
-gcc -Icommon -Ihost \
+karanrajput@karan sensor_hub % gcc -std=c11 -Wall -Wextra -Werror -Wshadow -Wconversion -Wunreachable-code \
+    -g -fsanitize=address,undefined \
+    -Icommon -Ihost \
     host/main.c \
     common/protocol.c \
-    host/gen.c \
     host/format.c \
     -o main
+karanrajput@karan sensor_hub % ./main
+-------  Starting the buffer analysis function  -------
+sync byte 170 in hex aa 
+flag byte 247 in hex f7 
+temprature  43 in hex 2b 
+device id 18 in hex 12 
+timestamp byte 181208 in hex 2c3d8 
+checksum byte 157 in hex 9d 
+result code of the buffer 0 
+karanrajput@karan sensor_hub % 
     */
+

@@ -20,5 +20,7 @@ typedef enum {
 // packet decoder function checks the packet inegrity
 checksum packet_decoder(struct packet_t *p, int len);
 
+// checksum generator 
+uint8_t checksum_gen(uint32_t timestamp);
 
 #endif

@@ -6,8 +6,6 @@
 
 // to print the buffer 
 void buffer_print(struct packet_t *p, int len){
-    struct packet_t p1;
-
     printf("sync byte %d in hex %x \n",p->sync_byte,p->sync_byte);
     printf("flag byte %d in hex %x \n",p->flag,p->flag);
     printf("temprature  %d in hex %x \n",p->temprature,p->temprature);

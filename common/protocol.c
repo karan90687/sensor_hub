@@ -3,38 +3,45 @@
 #include "protocol.h"
 #include "gen.h"
 
+uint8_t checksum_gen(uint32_t timestamp){
+    uint32_t mask = 0xFF;
+    uint8_t t[4];       // array of elements to store the extracted timestamp 
+    // printf("timestamp %x \n",timestamp);
+    for (int i=0; i<4; i++){
+        t[i] = (uint8_t)(mask & timestamp); // to extract the 8 bits from timestamp
+    timestamp = (timestamp >> 8);  
+    }
+    uint8_t checksum = t[0]+t[1]+t[2]+t[3];
 
-checksum packet_decoder(struct packet_t *p, int len){
-    // checking the lenght of packet
-    if (len == 13){
-        // printf("Buffer lenght is 13 as expected \n");
-        return GOOD;
-    }else if(len<13){
-        // printf("Buffer lenght is greater than expected %d \n",len);
-        return BAD;
-    }else{
-        // printf("Buffer lenght is less than expected %d \n",len);
+    // to print individual bits 
+    // for(int j=0; j<4; j++){
+    //         printf("bit t[%d] %x \n",j,t[j]);
+
+    //     }
+    // printf("checksum %x \n",checksum);
+
+    return checksum;
+}
+
+checksum packet_decoder(struct packet_t *p, int len)
+{
+    // Check length
+    if (len != 13) {
         return BAD;
     }
 
-    // checking the sync byte present or not
-    if((p->sync_byte) == 0xAA){
-        // printf("sync byte 0xAA is present \n");
-        return GOOD;
-    }else{
-        // printf("sync byte 0xAA is not present buffer contains %x \n",(p->sync_byte));
+    // Check sync byte
+    if (p->sync_byte != 0xAA) {
         return BAD;
     }
 
-
+    // Check checksum
     uint8_t recieved_checksum = checksum_gen(p->timestamp);
-    if (recieved_checksum == p->checksum){
-        // printf("buffer is perfect cheksum byte present \n");
-        return GOOD;
-    }else{
-        // printf("checksum byte is missing or corrupted %x \n",recieved_checksum);
+
+    if (recieved_checksum != p->checksum) {
         return BAD;
     }
 
-
+    // All checks passed
+    return GOOD;
 }
