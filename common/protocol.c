@@ -25,15 +25,17 @@ uint8_t checksum_gen(uint32_t timestamp){
     return checksum;
 }
 
-checksum packet_decoder(struct packet_t *p, int len)
+buffer_type packet_decoder(struct packet_t *p, int len)
 {
     // Check length
     if (len != 13) {
+        printf("short buffer \n");
         return BAD;
     }
 
     // Check sync byte
     if (p->sync_byte != 0xAA) {
+        printf("sync_byte missing in the buffer \n");
         return BAD;
     }
 
@@ -41,12 +43,14 @@ checksum packet_decoder(struct packet_t *p, int len)
     uint8_t recieved_checksum = checksum_gen(p->timestamp);
 
     if (recieved_checksum != p->checksum) {
+        printf("bad checksum buffer \n");
         return BAD;
     }
 
     // unused bits set or not
     bool unused_bit = ((p->flag) & 0x03);
     if(unused_bit == true){
+        printf("unused bits are set in buffer \n");
         return BAD;
     }
 

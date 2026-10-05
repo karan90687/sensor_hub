@@ -89,36 +89,37 @@ uint8_t c = checksum_gen(t);
     uint8_t packet[13];
 
     // // storing the data into the array to be written in edge.bin
-    // packet[0] = f1.sync_byte;
-    // packet[1] = f1.flag;
-    // packet[2] = (u_temprature  & 0xFF);
-    // packet[3] = ((u_temprature >> 8) & 0xFF);
-    // packet[4] = (f1.device_id & (0xFF));
-    // packet[5] = (f1.device_id >> 8) & 0xFF;
-    // packet[6] = (f1.device_id >> 16) & 0xFF;
-    // packet[7] = (f1.device_id >> 24) & 0xFF;
-    // packet[8] = (f1.timestamp & 0xFF);
-    // packet[9] = ((f1.timestamp >> 8) & 0xFF);
-    // packet[10] = ((f1.timestamp >> 16) & 0xFF);
-    // packet[11] = ((f1.timestamp >> 24) & 0xFF);
-    // packet[12] = f1.checksum;
-
-    // use this to make a big endian frame and call good_frame() while making big endian frame 
-    // here we are making teh device id inthe big endian foramt 
-
-        packet[0] = f1.sync_byte;
+    packet[0] = f1.sync_byte;
     packet[1] = f1.flag;
     packet[2] = (u_temprature  & 0xFF);
     packet[3] = ((u_temprature >> 8) & 0xFF);
-    packet[7] = (f1.device_id & (0xFF));
-    packet[6] = (f1.device_id >> 8) & 0xFF;
-    packet[5] = (f1.device_id >> 16) & 0xFF;
-    packet[4] = (f1.device_id >> 24) & 0xFF;
+    packet[4] = (f1.device_id & (0xFF));
+    packet[5] = (f1.device_id >> 8) & 0xFF;
+    packet[6] = (f1.device_id >> 16) & 0xFF;
+    packet[7] = (f1.device_id >> 24) & 0xFF;
     packet[8] = (f1.timestamp & 0xFF);
     packet[9] = ((f1.timestamp >> 8) & 0xFF);
     packet[10] = ((f1.timestamp >> 16) & 0xFF);
     packet[11] = ((f1.timestamp >> 24) & 0xFF);
     packet[12] = f1.checksum;
+
+
+    // // use this to make a big endian frame and call good_frame() while making big endian frame 
+    // // here we are making teh device id inthe big endian foramt 
+
+    //     packet[0] = f1.sync_byte;
+    // packet[1] = f1.flag;
+    // packet[2] = (u_temprature  & 0xFF);
+    // packet[3] = ((u_temprature >> 8) & 0xFF);
+    // packet[7] = (f1.device_id & (0xFF));
+    // packet[6] = (f1.device_id >> 8) & 0xFF;
+    // packet[5] = (f1.device_id >> 16) & 0xFF;
+    // packet[4] = (f1.device_id >> 24) & 0xFF;
+    // packet[8] = (f1.timestamp & 0xFF);
+    // packet[9] = ((f1.timestamp >> 8) & 0xFF);
+    // packet[10] = ((f1.timestamp >> 16) & 0xFF);
+    // packet[11] = ((f1.timestamp >> 24) & 0xFF);
+    // packet[12] = f1.checksum;
 
 
 
@@ -131,6 +132,8 @@ if (file == NULL) {
 }
 
 size_t count = 13;
+    // for the short buffer  reduce count this will write less bytes on the binary 
+
 
 size_t written = fwrite(packet, sizeof(uint8_t), count, file);
 
@@ -146,12 +149,12 @@ fclose(file);
 }
 
 /* i used this to compile this file to generate a buffer and store it in the edge.bin
-karanrajput@karan sensor_hub % gcc -std=c11 -Wall -Wextra -Werror -Wshadow -Wconversion -Wunreachable-code \
+karanrajput@Mac sensor_hub % gcc -std=c11 -Wall -Wextra -Werror -Wshadow -Wconversion -Wunreachable-code \
     -g -fsanitize=address,undefined \
     -Icommon -Ihost \
-    host/gen.c common/protocol.c -o gen      
-karanrajput@karan sensor_hub % ./gen
+    host/gen.c common/protocol.c -o gen
+karanrajput@Mac sensor_hub % ./gen
 Successfully wrote 13 elements to the file.
-karanrajput@karan sensor_hub % 
+karanrajput@Mac sensor_hub  
 
 */

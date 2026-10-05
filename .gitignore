@@ -9,7 +9,7 @@ build/
 # Generated test data (gen recreates it)
 tests/data/*.bin
 
-# Coverage files (Stage 6)
+# Coverage files (Stage 6)  
 *.gcda
 *.gcno
 *.profraw

@@ -26,6 +26,21 @@ uint32_t 0xFF = 0xFF;
     packet[5] = (device_id >> 8) & 0xFF;
 ```
 
+### recombine the splitted bits
+- concept : to recombine the splitted bits like example a variable of `uint16_t`
+```c
+    uint16_t value = 0x1234;
+    uint8_t high = (value >> 8) & 0xFF;
+    uint8_t low  = value & 0xFF;    
+
+    to combine back we will use "|" operator 
+    uint16_t value = ((uint16_t)high << 8) | low;
+```
+- similarly for `uint32_t` as shown below in frame.timestamp 
+```c
+    frame.timestamp = ((uint32_t)buffer[11] << 24) | ((uint32_t)buffer[10] << 16) | ((uint32_t)buffer[9] << 8) | buffer[8];
+```
+
 ### C's integer promotions
 
 ```c

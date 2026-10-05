@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 // frame format
+
 // flag byte:  7 6 5 4     | 3 2 |     1 0
 //             sensor type  flags      unused
 
@@ -18,10 +19,10 @@ typedef struct packet_t{
 typedef enum {
     GOOD,
     BAD
-} checksum;
+} buffer_type;
 
 // packet decoder function checks the packet inegrity
-checksum packet_decoder(struct packet_t *p, int len);
+buffer_type packet_decoder(struct packet_t *p, int len);
 
 // checksum generator 
 uint8_t checksum_gen(uint32_t timestamp);
