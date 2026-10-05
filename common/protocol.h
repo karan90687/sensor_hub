@@ -3,6 +3,9 @@
 #include <stdint.h>
 
 // frame format
+// flag byte:  7 6 5 4     | 3 2 |     1 0
+//             sensor type  flags      unused
+
 typedef struct packet_t{
     uint8_t sync_byte;
     uint8_t flag;      // 4 msb bits will be sensor type and rest 4 will be flags

@@ -34,7 +34,10 @@ int main() {
     frame.sync_byte = buffer[0];
     frame.flag  = buffer[1];
     frame.temprature = (int16_t)(((uint16_t)buffer[3] << 8) | buffer[2]);
-    frame.device_id = ((uint32_t)buffer[7] << 24) | ((uint32_t)buffer[6] << 16) | ((uint32_t)buffer[5] << 8) | buffer[4];
+    // frame.device_id = ((uint32_t)buffer[7] << 24) | ((uint32_t)buffer[6] << 16) | ((uint32_t)buffer[5] << 8) | buffer[4];
+    // while decoding the big endian device_id use this not above 
+        frame.device_id = ((uint32_t)buffer[4] << 24) | ((uint32_t)buffer[5] << 16) | ((uint32_t)buffer[6] << 8) | buffer[7];
+
     frame.timestamp = ((uint32_t)buffer[11] << 24) | ((uint32_t)buffer[10] << 16) | ((uint32_t)buffer[9] << 8) | buffer[8];
     frame.checksum = buffer[12];
 

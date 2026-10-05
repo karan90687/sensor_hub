@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include "protocol.h"
 #include "gen.h"
+#include <stdbool.h>
+
 
 uint8_t checksum_gen(uint32_t timestamp){
     uint32_t mask = 0xFF;
@@ -39,6 +41,12 @@ checksum packet_decoder(struct packet_t *p, int len)
     uint8_t recieved_checksum = checksum_gen(p->timestamp);
 
     if (recieved_checksum != p->checksum) {
+        return BAD;
+    }
+
+    // unused bits set or not
+    bool unused_bit = ((p->flag) & 0x03);
+    if(unused_bit == true){
         return BAD;
     }
 

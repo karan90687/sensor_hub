@@ -8,7 +8,7 @@
 void good_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
 
         f1->sync_byte = 0xAA;
-    f1->flag = 0xF7;       // 11110111
+    f1->flag = 0xF4;       // 11110111
     f1->temprature = 0x2B;    // 43
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
@@ -18,7 +18,7 @@ void good_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
 void tmp_negative_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
 
         f1->sync_byte = 0xAA;
-    f1->flag = 0xF7;       // 11110111
+    f1->flag = 0xF4;       // 11110111
     f1->temprature = -43;    // 43
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
@@ -28,23 +28,32 @@ void tmp_negative_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
 void bad_sync_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
 
         f1->sync_byte = 0xAB;
-    f1->flag = 0xF7;       // 11110111
+    f1->flag = 0xF4;       // 11110111
     f1->temprature = -43;    // 43
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
     f1->checksum = c;
 }
 
-void bad_checksum_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
+void bad_checksum_frame(struct packet_t *f1 ,uint32_t timestamp){
 
         f1->sync_byte = 0xAA;
-    f1->flag = 0xF7;       // 11110111
+    f1->flag = 0xF4;       // 11110111
     f1->temprature = -43;    // 43
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
     f1->checksum = 0x34;
 }
 
+void unused_flag_bit_set(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
+
+        f1->sync_byte = 0xAA;
+    f1->flag = 0xF7;       // 11110111
+    f1->temprature = 0x2B;    // 43
+    f1->device_id =  0x12;   // 18
+    f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
+    f1->checksum = c;
+}
 
 
 int main(){
@@ -54,9 +63,17 @@ uint8_t c = checksum_gen(t);
 
     struct packet_t f1;
     // to generate a good frame
-    good_frame(&f1,t,c);
+    good_frame(&f1,t,c);    
 
-    // to make a frame with negative temprature 
+    // tmp_negative_frame(&f1,t,c);
+
+    // bad_sync_frame(&f1,t,c);
+
+    // bad_checksum_frame(&f1,t);   // while using this comment the checksum_gen(t); 
+
+    // unused_flag_bit_set(&f1,t,c);
+
+
 
 
     // to debug 
@@ -71,20 +88,38 @@ uint8_t c = checksum_gen(t);
     uint16_t u_temprature = (uint16_t)f1.temprature;    
     uint8_t packet[13];
 
-    // storing the data into the array to be written in edge.bin
-    packet[0] = f1.sync_byte;
+    // // storing the data into the array to be written in edge.bin
+    // packet[0] = f1.sync_byte;
+    // packet[1] = f1.flag;
+    // packet[2] = (u_temprature  & 0xFF);
+    // packet[3] = ((u_temprature >> 8) & 0xFF);
+    // packet[4] = (f1.device_id & (0xFF));
+    // packet[5] = (f1.device_id >> 8) & 0xFF;
+    // packet[6] = (f1.device_id >> 16) & 0xFF;
+    // packet[7] = (f1.device_id >> 24) & 0xFF;
+    // packet[8] = (f1.timestamp & 0xFF);
+    // packet[9] = ((f1.timestamp >> 8) & 0xFF);
+    // packet[10] = ((f1.timestamp >> 16) & 0xFF);
+    // packet[11] = ((f1.timestamp >> 24) & 0xFF);
+    // packet[12] = f1.checksum;
+
+    // use this to make a big endian frame and call good_frame() while making big endian frame 
+    // here we are making teh device id inthe big endian foramt 
+
+        packet[0] = f1.sync_byte;
     packet[1] = f1.flag;
     packet[2] = (u_temprature  & 0xFF);
     packet[3] = ((u_temprature >> 8) & 0xFF);
-    packet[4] = (f1.device_id & (0xFF));
-    packet[5] = (f1.device_id >> 8) & 0xFF;
-    packet[6] = (f1.device_id >> 16) & 0xFF;
-    packet[7] = (f1.device_id >> 24) & 0xFF;
+    packet[7] = (f1.device_id & (0xFF));
+    packet[6] = (f1.device_id >> 8) & 0xFF;
+    packet[5] = (f1.device_id >> 16) & 0xFF;
+    packet[4] = (f1.device_id >> 24) & 0xFF;
     packet[8] = (f1.timestamp & 0xFF);
     packet[9] = ((f1.timestamp >> 8) & 0xFF);
     packet[10] = ((f1.timestamp >> 16) & 0xFF);
     packet[11] = ((f1.timestamp >> 24) & 0xFF);
     packet[12] = f1.checksum;
+
 
 
         // writting the data to edge.bin

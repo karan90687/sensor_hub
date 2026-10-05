@@ -27,4 +27,4 @@ firmware/warmup/**/Release/
 #executables
 main
 gen
-context.md
+/lab
