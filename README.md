@@ -13,7 +13,7 @@ Total packet size: **13 bytes**
 | 12 | `checksum` | 1 byte |
 ---
 
-## Byte 1 — Sync Byte
+## Byte 0 — Sync Byte
 
 ```text
   7 6 5 4 3 2 1 0
@@ -21,7 +21,7 @@ Total packet size: **13 bytes**
 │     SYNC BYTE   │
 └─────────────────┘
 ```
-## Byte 0 — Flag and Device type bit
+## Byte 1 — Flag and Device type bit
 ```
 Value: 0xAA
 

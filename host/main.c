@@ -23,31 +23,43 @@ int main() {
     fclose(file);
 
         // printf("Read %zu bytes:\n", count);
-    uint8_t buffer[13];
+    uint8_t buffer[count];
 
     for (size_t i = 0; i < count; i++) {
         buffer[i] = edge[i];
         // printf("%02X ", edge[i]);
     }
     // printf("\n");
-    struct packet_t frame;
-    frame.sync_byte = buffer[0];
-    frame.flag  = buffer[1];
-    frame.temprature = (int16_t)(((uint16_t)buffer[3] << 8) | buffer[2]);
-    frame.device_id = ((uint32_t)buffer[7] << 24) | ((uint32_t)buffer[6] << 16) | ((uint32_t)buffer[5] << 8) | buffer[4];
-    // while decoding the big endian device_id use this not above 
-        // frame.device_id = ((uint32_t)buffer[4] << 24) | ((uint32_t)buffer[5] << 16) | ((uint32_t)buffer[6] << 8) | buffer[7];
-    frame.timestamp = ((uint32_t)buffer[11] << 24) | ((uint32_t)buffer[10] << 16) | ((uint32_t)buffer[9] << 8) | buffer[8];
-    frame.checksum = buffer[12];
+    // struct packet_t frame;
+    // frame.sync_byte = buffer[0];
+    // frame.flag  = buffer[1];
+    // frame.temprature = (int16_t)(((uint16_t)buffer[3] << 8) | buffer[2]);
+    // frame.device_id = ((uint32_t)buffer[7] << 24) | ((uint32_t)buffer[6] << 16) | ((uint32_t)buffer[5] << 8) | buffer[4];
+    // // while decoding the big endian device_id use this not above 
+    //     // frame.device_id = ((uint32_t)buffer[4] << 24) | ((uint32_t)buffer[5] << 16) | ((uint32_t)buffer[6] << 8) | buffer[7];
+    // frame.timestamp = ((uint32_t)buffer[11] << 24) | ((uint32_t)buffer[10] << 16) | ((uint32_t)buffer[9] << 8) | buffer[8];
+    // frame.checksum = buffer[12];
 
-    int len =(int)count;
+    // int len =(int)count;
     // printf("------- Decoding and analysing the obtained buffer ------- \n");
-    buffer_type result = packet_decoder(&frame, len);
-    if (result == 0){
+
+    buffer_type result = packet_decoder(buffer, count);
+    
+    if (result == GOOD_BUFFER){
     printf("The buffer is good Kernel Happy \n");
-    buffer_print(&frame);
-    }else{
-        // printf("bad buffer provided \n");
+    // buffer_print(&frame);
+
+    }else if(result == SHORT_BUFFER){
+        printf("short buffer \n");
+        return -1;
+    }else if(result == BAD_SYNC_BYTE){
+        printf("sync_byte missing in the buffer \n");
+        return -1;
+    }else if(result == BAD_CHECKSUM){
+        printf("bad checksum buffer \n");
+        return -1;
+    }else if(result == FILLED_UNUSED_BITS){
+        printf("unused bits are set in buffer \n");
         return -1;
     }
     

@@ -2,40 +2,38 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "protocol.h"
 #include "gen.h"
 
-void good_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
+void good_frame(struct packet_t *f1 ,uint32_t timestamp){
 
         f1->sync_byte = 0xAA;
     f1->flag = 0xF4;       // 11110111
     f1->temprature = 0x2B;    // 43
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
-    f1->checksum = c;
 }
 
-void tmp_negative_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
+void tmp_negative_frame(struct packet_t *f1 ,uint32_t timestamp){
 
         f1->sync_byte = 0xAA;
     f1->flag = 0xF4;       // 11110111
     f1->temprature = -43;    // 43
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
-    f1->checksum = c;
 }
 
-void bad_sync_frame(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
+void bad_sync_frame(struct packet_t *f1 ,uint32_t timestamp){
 
         f1->sync_byte = 0xAB;
     f1->flag = 0xF4;       // 11110111
     f1->temprature = -43;    // 43
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
-    f1->checksum = c;
 }
 
-void bad_checksum_frame(struct packet_t *f1 ,uint32_t timestamp){
+uint8_t bad_checksum_frame(struct packet_t *f1 ,uint32_t timestamp){
 
         f1->sync_byte = 0xAA;
     f1->flag = 0xF4;       // 11110111
@@ -43,38 +41,38 @@ void bad_checksum_frame(struct packet_t *f1 ,uint32_t timestamp){
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
     f1->checksum = 0x34;
+    return f1->checksum;
 }
 
-void unused_flag_bit_set(struct packet_t *f1 ,uint32_t timestamp,uint8_t c){
+void unused_flag_bit_set(struct packet_t *f1 ,uint32_t timestamp){
 
         f1->sync_byte = 0xAA;
     f1->flag = 0xF7;       // 11110111
     f1->temprature = 0x2B;    // 43
     f1->device_id =  0x12;   // 18
     f1->timestamp =  timestamp;     // 181208 sec:mnt:hr
-    f1->checksum = c;
 }
 
 
 int main(){
 
     uint32_t t = 0x2C3D8;
-uint8_t c = checksum_gen(t);
 
     struct packet_t f1;
     // to generate a good frame
-    good_frame(&f1,t,c);    
+    // good_frame(&f1,t);    
 
-    // tmp_negative_frame(&f1,t,c);
+    // to make a negative temp byte
+    // tmp_negative_frame(&f1,t);
 
-    // bad_sync_frame(&f1,t,c);
+    // to make a bad sync byte
+    // bad_sync_frame(&f1,t);
 
-    // bad_checksum_frame(&f1,t);   // while using this comment the checksum_gen(t); 
+// comment above functions  
+bool bad_checksum = false;       // make it false for good cheksum 
 
-    // unused_flag_bit_set(&f1,t,c);
-
-
-
+    // to set the unused flag byte
+    unused_flag_bit_set(&f1,t);
 
     // to debug 
     // printf("sync byte %d \n",f1.sync_byte);
@@ -87,8 +85,17 @@ uint8_t c = checksum_gen(t);
     // convert the int16_t temprature to uint16_t
     uint16_t u_temprature = (uint16_t)f1.temprature;    
     uint8_t packet[13];
+    size_t packet_len =13;
 
     // // storing the data into the array to be written in edge.bin
+        if (bad_checksum == true){
+        uint8_t b_checksum = bad_checksum_frame(&f1, t);
+        packet[12] = b_checksum;
+    }else{
+    uint8_t checksum = checksum_gen(packet, packet_len);
+    packet[12] = checksum;
+    }
+
     packet[0] = f1.sync_byte;
     packet[1] = f1.flag;
     packet[2] = (u_temprature  & 0xFF);
@@ -101,8 +108,6 @@ uint8_t c = checksum_gen(t);
     packet[9] = ((f1.timestamp >> 8) & 0xFF);
     packet[10] = ((f1.timestamp >> 16) & 0xFF);
     packet[11] = ((f1.timestamp >> 24) & 0xFF);
-    packet[12] = f1.checksum;
-
 
     // // use this to make a big endian frame and call good_frame() while making big endian frame 
     // // here we are making teh device id inthe big endian foramt 
@@ -119,7 +124,8 @@ uint8_t c = checksum_gen(t);
     // packet[9] = ((f1.timestamp >> 8) & 0xFF);
     // packet[10] = ((f1.timestamp >> 16) & 0xFF);
     // packet[11] = ((f1.timestamp >> 24) & 0xFF);
-    // packet[12] = f1.checksum;
+    // uint8_t checksum = checksum_gen(packet, packet_len);
+    // packet[12] = checksum;
 
 
 
@@ -131,7 +137,7 @@ if (file == NULL) {
     return 1;
 }
 
-size_t count = 13;
+size_t count = 12;
     // for the short buffer  reduce count this will write less bytes on the binary 
 
 
