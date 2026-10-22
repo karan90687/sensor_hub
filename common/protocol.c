@@ -5,9 +5,9 @@
 #include <stdbool.h>
 
 
-uint8_t checksum_gen(uint8_t *packet, size_t len){
+uint8_t checksum_gen(uint8_t *packet){
     uint8_t checksum = 0;
-        for (size_t i = 0; i < (len-1); i++)
+        for (size_t i = 0; i < 12; i++)
     {
         checksum += packet[i];
         // printf("byte %zu value %x \n",i,packet[i]);
@@ -35,7 +35,7 @@ buffer_type packet_decoder(uint8_t *buffer, size_t len)
     }
 
        // Check checksum
-    uint8_t checksum  = checksum_gen(buffer,len);
+    uint8_t checksum  = checksum_gen(buffer);
     if (buffer[12] != checksum) {
         return BAD_CHECKSUM;
     }

@@ -22,13 +22,13 @@ int main() {
 
     fclose(file);
 
-        // printf("Read %zu bytes:\n", count);
-    uint8_t buffer[count];
+    //     // printf("Read %zu bytes:\n", count);
+    // uint8_t buffer[count];
 
-    for (size_t i = 0; i < count; i++) {
-        buffer[i] = edge[i];
-        // printf("%02X ", edge[i]);
-    }
+    // for (size_t i = 0; i < count; i++) {
+    //     buffer[i] = edge[i];
+    //     // printf("%02X ", edge[i]);
+    // }
     // printf("\n");
     // struct packet_t frame;
     // frame.sync_byte = buffer[0];
@@ -43,7 +43,7 @@ int main() {
     // int len =(int)count;
     // printf("------- Decoding and analysing the obtained buffer ------- \n");
 
-    buffer_type result = packet_decoder(buffer, count);
+    buffer_type result = packet_decoder(edge, count);
     
     if (result == GOOD_BUFFER){
     printf("The buffer is good Kernel Happy \n");

@@ -60,7 +60,7 @@ int main(){
 
     struct packet_t f1;
     // to generate a good frame
-    // good_frame(&f1,t);    
+    good_frame(&f1,t);    
 
     // to make a negative temp byte
     // tmp_negative_frame(&f1,t);
@@ -72,7 +72,7 @@ int main(){
 bool bad_checksum = false;       // make it false for good cheksum 
 
     // to set the unused flag byte
-    unused_flag_bit_set(&f1,t);
+    // unused_flag_bit_set(&f1,t);
 
     // to debug 
     // printf("sync byte %d \n",f1.sync_byte);
@@ -85,16 +85,7 @@ bool bad_checksum = false;       // make it false for good cheksum
     // convert the int16_t temprature to uint16_t
     uint16_t u_temprature = (uint16_t)f1.temprature;    
     uint8_t packet[13];
-    size_t packet_len =13;
-
-    // // storing the data into the array to be written in edge.bin
-        if (bad_checksum == true){
-        uint8_t b_checksum = bad_checksum_frame(&f1, t);
-        packet[12] = b_checksum;
-    }else{
-    uint8_t checksum = checksum_gen(packet, packet_len);
-    packet[12] = checksum;
-    }
+    // size_t packet_len =13;
 
     packet[0] = f1.sync_byte;
     packet[1] = f1.flag;
@@ -108,6 +99,14 @@ bool bad_checksum = false;       // make it false for good cheksum
     packet[9] = ((f1.timestamp >> 8) & 0xFF);
     packet[10] = ((f1.timestamp >> 16) & 0xFF);
     packet[11] = ((f1.timestamp >> 24) & 0xFF);
+        // // storing the data into the array to be written in edge.bin
+        if (bad_checksum == true){
+        uint8_t b_checksum = bad_checksum_frame(&f1, t);
+        packet[12] = b_checksum;
+    }else{
+    uint8_t checksum = checksum_gen(packet);
+    packet[12] = checksum;
+    }
 
     // // use this to make a big endian frame and call good_frame() while making big endian frame 
     // // here we are making teh device id inthe big endian foramt 
@@ -137,7 +136,7 @@ if (file == NULL) {
     return 1;
 }
 
-size_t count = 12;
+size_t count = 13;
     // for the short buffer  reduce count this will write less bytes on the binary 
 
 

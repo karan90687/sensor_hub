@@ -28,6 +28,6 @@ typedef enum {
 buffer_type packet_decoder(uint8_t *buffer, size_t len);
 
 // checksum generator 
-uint8_t checksum_gen(uint8_t *packet, size_t len);
+uint8_t checksum_gen(uint8_t *packet);
 
 #endif
