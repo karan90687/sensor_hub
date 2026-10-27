@@ -15,9 +15,21 @@ tests/data/*.bin
 *.profraw
 coverage/
 
-# STM32CubeIDE output (warm-up track)
-firmware/warmup/**/Debug/
-firmware/warmup/**/Release/
+# STM32 firmware (CubeMX + CMake projects)
+# build/ above already covers each project's build/Debug and build/Release
+firmware/**/Debug/
+firmware/**/Release/
+# HAL + CMSIS libraries: CubeMX regenerates them from the .ioc
+firmware/**/Drivers/
+# CubeMX's own cache file, regenerated on every Generate Code
+firmware/**/.mxproject
+# Build outputs, in case any land outside build/
+firmware/**/*.elf
+firmware/**/*.bin
+firmware/**/*.hex
+firmware/**/*.map
+firmware/**/*.list
+firmware/**/*.su
 
 # macOS and editors
 .DS_Store
